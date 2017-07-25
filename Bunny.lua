@@ -13,8 +13,20 @@ Bunny.anchor = {
   y = 1
 }
 
-function Bunny:update () 
-  
+Bunny.position = {
+  x = 0,
+  y = 0
+}
+
+Bunny.gravity = 0
+
+function Bunny:update ()
+  self.position.x += self.speedX
+
+  self.position.y += self.speedY
+
+  self.speedY += self.gravity
+
 end
 
 return Bunny
