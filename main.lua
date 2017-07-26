@@ -3,7 +3,7 @@ local height = 320
 love.window.setMode(width, height)
 
 local bunniesImage = nil
-
+local spriteBatch = nil
 local bunnies = {}
 local gravity = 0.5
 
@@ -38,7 +38,6 @@ local currentQuad = nil
 
 function makeBunny(image, quad)
         return {
-                image = bunniesImage,
                 quad = currentQuad,
                 width = bunnyWidth,
                 height = bunnyHeight,
@@ -67,12 +66,15 @@ function love.load()
         love.graphics.setBackgroundColor(255, 255, 255)
 
         bunniesImage = love.graphics.newImage('bunnys.png');
+	local imageWidth, imageHeight = bunniesImage:getDimensions()
 
-        bunny1 = love.graphics.newQuad(2, 47, bunnyWidth, bunnyHeight, bunniesImage:getDimensions())
-        bunny2 = love.graphics.newQuad(2, 86, bunnyWidth, bunnyHeight, bunniesImage:getDimensions())
-        bunny3 = love.graphics.newQuad(2, 125, bunnyWidth, bunnyHeight, bunniesImage:getDimensions())
-        bunny4 = love.graphics.newQuad(2, 164, bunnyWidth, bunnyHeight, bunniesImage:getDimensions())
-        bunny5 = love.graphics.newQuad(2, 2, bunnyWidth, bunnyHeight, bunniesImage:getDimensions())
+        bunny1 = love.graphics.newQuad(2, 47, bunnyWidth, bunnyHeight, imageWidth, imageHeight)
+        bunny2 = love.graphics.newQuad(2, 86, bunnyWidth, bunnyHeight, imageWidth, imageHeight)
+        bunny3 = love.graphics.newQuad(2, 125, bunnyWidth, bunnyHeight, imageWidth, imageHeight)
+        bunny4 = love.graphics.newQuad(2, 164, bunnyWidth, bunnyHeight, imageWidth, imageHeight)
+        bunny5 = love.graphics.newQuad(2, 2, bunnyWidth, bunnyHeight, imageWidth, imageHeight)
+
+	spriteBatch = love.graphics.newSpriteBatch(bunniesImage, maxBunnyCount, 'static')
 
         bunnyQuads = {bunny1, bunny2, bunny3, bunny4, bunny5}
         bunnyType = 3
@@ -85,6 +87,7 @@ function love.load()
                 bunny.anchor.x = 0.5
                 bunny.anchor.y = 1
 
+		bunny.id = spriteBatch:add(bunny.quad, bunny.position.x, bunny.position.y, bunny.rotation, bunny.scale.x, bunny.scale.y, bunny.anchor.x, bunny.anchor.y)
                 count = count + 1
                 bunnies[count] = bunny
         end
@@ -104,6 +107,8 @@ function love.update()
                                 bunny.scale.y = scale
 
                                 bunny.rotation = math.random() - 0.5
+
+				bunny.id = spriteBatch:add(bunny.quad, bunny.position.x, bunny.position.y, bunny.rotation, bunny.scale.x, bunny.scale.y, bunny.anchor.x, bunny.anchor.y)
 
                                 count = count + 1
                                 bunnies[count] = bunny
@@ -136,15 +141,14 @@ function love.update()
                         bunny.speed.y = 0
                         bunny.position.y = minY
                 end
+
+		spriteBatch:set(bunny.id, bunny.quad, bunny.position.x, bunny.position.y, bunny.rotation, bunny.scale.x, bunny.scale.y, bunny.anchor.x, bunny.anchor.y)
         end
 end
 
 function love.draw()
         love.graphics.setColor(255, 255, 255)
-        for i,v in ipairs(bunnies) do
-                local bunny = bunnies[i]
-                love.graphics.draw(bunny.image, bunny.quad, bunny.position.x, bunny.position.y, bunny.rotation, bunny.scale.x, bunny.scale.y, bunny.anchor.x, bunny.anchor.y)
-        end
+	love.graphics.draw(spriteBatch, 0, 0)
 
         love.graphics.setColor(0, 0, 0, (255 * 0.9))
         love.graphics.rectangle('fill', 0, 0, 58, 20)
