@@ -24,7 +24,7 @@ local amount = 10
 local osName = love.system.getOS()
 local cores = love.system.getProcessorCount()
 local major, minor, rev = love.getVersion()
-local title = 'Bunnymark v3, ' .. osName .. ' x' .. cores .. ', Love v' .. major .. '.' .. minor .. '.' .. rev
+local title = 'Bunnymark v3: ' .. osName .. ' with ' .. cores .. ' cores on LÖVE v' .. major .. '.' .. minor .. '.' .. rev
 love.window.setTitle(title)
 
 local bunny1 = nil
